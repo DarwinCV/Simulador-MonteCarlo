@@ -5,26 +5,14 @@ fluidPage(
   fluidRow(
     br(),
     headerPanel(
-      tags$div(
-        a(
-          img(
-            src = "myImage3.png", 
-            width = 250
-          ), 
-          href = "https://www.aseguradoradelsur.com.ec/"
-        ),
-        h1("Simulacion de perdidas - Frequencia/Severidad "),
-        actionButton(
-          "tour", 
-          "Tour",
-          class = "btn btn-info pull-right"
-        ),
-        actionButton(
-          "creditos", 
-          "Creditos",
-          class = "btn btn-info pull-right"
-        )
-      ), 
+      tags$div( class = "title",
+                tags$h1("Simulador de perdidas", class = "titre"),
+                tags$h2("Modelo Colectivo de Riesgo", class = "soustitre"),
+                tags$br(),
+                tags$span(icon("codepen", lib = "font-awesome"), class = "main-icon"),
+                actionButton("tour", "Tour", class = "btn btn-info pull-right"),
+                actionButton("creditos", "Creditos", class = "btn btn-info pull-right")
+                ), 
       windowTitle = "Simulacion de perdidas"
     )
   ),
@@ -40,9 +28,8 @@ fluidPage(
           actionButton(
             "run_freq", 
             "Simular",
-            icon = icon("download"),
-            width = "100%",
-            class = "example-css-selector"
+            class = "btn btn-info",
+            width = "100%"
           )
         ),
         br(),
