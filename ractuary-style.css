@@ -11,3 +11,42 @@ h1 {
 th {
   text-align: center;
 }
+
+
+.titre {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size:60px;
+  margin-top: 5px; margin-bottom: 0px;
+  text-align: left;
+  font-weight: normal;
+  color: #607D8B;
+}
+
+.soustitre {
+  font-family: "Lucida Grande", Tahoma;
+  font-size: 20px;
+  font-weight: lighter;
+  font-variant: normal;
+  text-transform: uppercase;
+  color: #666666;
+  margin-top: 10px;
+  text-align: left;
+  letter-spacing: 0.3em;
+}
+
+
+.main-icon {
+  position: absolute; 
+  top: 0px; 
+  bottom: 5px;
+  right: 35px; 
+  color: #6BC9FA; 
+  font-size: 300%; 
+  z-index: -1;
+}
+
+.well{
+background-color:#ffffff;
+border-style: solid;
+border-width: 2px;
+}
