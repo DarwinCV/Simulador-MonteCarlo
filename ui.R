@@ -116,6 +116,13 @@ fluidPage(
           )
         )
       ),
+      fluidRow(  column(4, style='padding:2px;', uiOutput("ui_loss")%>% 
+                          shinycssloaders::withSpinner(type = 7, color = "#6BC9FA", hide.ui = FALSE) ),
+                 column(4, style='padding:2px;', uiOutput("ui_loss_quantil")%>% 
+                          shinycssloaders::withSpinner(type = 7, color = "#6BC9FA", hide.ui = FALSE) ),
+                 column(4, style='padding:2px;', uiOutput("ui_loss_ced")%>% 
+                          shinycssloaders::withSpinner(type = 7, color = "#6BC9FA", hide.ui = FALSE) )  
+      ),
       fluidRow(
         column(
           width = 12,
