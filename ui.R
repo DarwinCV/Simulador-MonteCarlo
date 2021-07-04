@@ -59,19 +59,6 @@ fluidPage(
           h4("Parametros"),
           fluidRow(
             uiOutput("freq_param_boxes") 
-          ),
-          h4("Resumen de distribución"),
-          fluidRow(
-            column(
-              6,
-              style = "text-align: center",
-              textOutput("implied_freq_mean_out")
-            ),
-            column(
-              6,
-              style = "text-align: center",
-              textOutput("implied_freq_sd_out")
-            )
           )
         ),
         br(),
@@ -87,19 +74,6 @@ fluidPage(
           h4("Parametros"),
           fluidRow(
             uiOutput("sev_param_boxes") 
-          ),
-          h4("Resumen de distribución"),
-          fluidRow(
-            column(
-              6,
-              style = "text-align: center",
-              textOutput("implied_sev_mean_out")
-            ),
-            column(
-              6,
-              style = "text-align: center",
-              textOutput("implied_sev_sd_out")
-            )
           )
         )
       )
@@ -196,17 +170,11 @@ fluidPage(
             ),
             tabPanel(
               title = "Tabla de nivel de confianza",
-              br(),
+              h3("Download All Claims"),
+              p("Cada fila representa una observación de frecuencia / severidad"),
+              downloadButton("download_claims", "Download reclamos"),
+              hr(),
               DT::dataTableOutput("sorter")
-            ),
-            tabPanel(
-              title = "Download",
-              br(),
-              wellPanel(
-                h3("Download All Claims"),
-                p("Cada fila representa una observación de frecuencia / severidad"),
-                downloadButton("download_claims", "Download reclamos")
-              )
             )
           )
         )
