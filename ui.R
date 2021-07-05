@@ -1,5 +1,6 @@
 fluidPage(
   introjsUI(),
+  shinyWidgets::useShinydashboard(),
   theme = shinytheme("spacelab"),
   includeCSS("ractuary-style.css"),
   fluidRow(
@@ -12,12 +13,18 @@ fluidPage(
                 tags$span(icon("codepen", lib = "font-awesome"), class = "main-icon"),
                 actionButton("tour", "Tour", class = "btn btn-info pull-right"),
                 actionButton("creditos", "Creditos", class = "btn btn-info pull-right")
-                ), 
+      ), 
       windowTitle = "Simulacion de perdidas"
     )
   ),
-  
-  br(),
+  tabsetPanel(id = "hidden_tabs",
+              tabPanel("Ajustar Distribucion",
+                       br(),
+                       source("ui_ajus_distr.R", local=TRUE)$value
+                       
+              ),
+              tabPanel( "Simular", 
+                        br(),
   
   fluidRow(
     column(
@@ -47,7 +54,7 @@ fluidPage(
           )
         ),
         br(),
-        hr(style="border-color: #000"),
+        hr(),
         div(
           id = "tour_4",
           h3("Frecuencia", class = "well-title"),
@@ -62,7 +69,7 @@ fluidPage(
           )
         ),
         br(),
-        hr(style="border-color: #000"),
+        hr(),
         div(
           id = "tour_5",
           h3("Severidad", class = "well-title"),
@@ -116,11 +123,11 @@ fluidPage(
           )
         )
       ),
-      fluidRow(  column(4, style='padding:2px;', uiOutput("ui_loss")%>% 
+      fluidRow(  column(4, style='padding:10px;', uiOutput("ui_loss")%>% 
                           shinycssloaders::withSpinner(type = 7, color = "#6BC9FA", hide.ui = FALSE) ),
-                 column(4, style='padding:2px;', uiOutput("ui_loss_quantil")%>% 
+                 column(4, style='padding:10px;', uiOutput("ui_loss_quantil")%>% 
                           shinycssloaders::withSpinner(type = 7, color = "#6BC9FA", hide.ui = FALSE) ),
-                 column(4, style='padding:2px;', uiOutput("ui_loss_ced")%>% 
+                 column(4, style='padding:10px;', uiOutput("ui_loss_ced")%>% 
                           shinycssloaders::withSpinner(type = 7, color = "#6BC9FA", hide.ui = FALSE) )  
       ),
       fluidRow(
@@ -189,4 +196,5 @@ fluidPage(
     )
   )
 )
+))
 
