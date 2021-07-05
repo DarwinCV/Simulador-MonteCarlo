@@ -22,6 +22,7 @@ library(rintrojs)
 library(shinycssloaders)
 library(tychobratools)
 library(htmltools)
+library(shinyWidgets)
 
 # turn off scientific notation
 options(scipen=999)
