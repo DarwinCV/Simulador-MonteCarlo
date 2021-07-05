@@ -1,4 +1,9 @@
+
 function(input, output, session) {
+  
+
+# Tour --------------------------------------------------------------------
+
   source("zz-tour.R", local = TRUE)
   set.seed(1234)
    observeEvent(input$creditos,{
@@ -14,6 +19,11 @@ function(input, output, session) {
     
     
   })
+  
+
+
+# Render parametros de distribuciones -------------------------------------
+
   
   # determinar los parámetros y valores por defecto que pertenecen a la distribución de frecuencia
   freq_param_labels <- reactive({
@@ -36,9 +46,19 @@ function(input, output, session) {
       )
     })
   })
+
+  # determinar los parámetros y valores por defecto que pertenecen a la distribución de severidad
+  sev_param_labels <- reactive({
+    switch(input$sev_dist,
+           "lognormal" = list(params = c("mu", "sigma"), values = c(9.0, 2.0)),
+           "pareto" = list(params = c("theta", "alpha"), values = c(100000, 3.0)),
+           "exponential" = list(params = "theta", values = 50000),
+           "gamma" = list(params = c("theta", "alpha"), values = c(25000, 2)),
+           "weibull" = list(params = c("theta", "tau"), values = c(25000, 0.5))
+    )
+  })
   
-  
-  # crear cuadros de entrada para los parámetros de gravedad
+  # crear cuadros de entrada para los parámetros de severidad
   output$sev_param_boxes <- renderUI({
     lapply(1:length(sev_param_labels()[["params"]]), function(i) {
       column(
@@ -52,18 +72,50 @@ function(input, output, session) {
     })
   })
   
-  # determinar los parámetros y valores por defecto que pertenecen a la distribución de severidad
-  sev_param_labels <- reactive({
-    switch(input$sev_dist,
-           "lognormal" = list(params = c("mu", "sigma"), values = c(9.0, 2.0)),
-           "pareto" = list(params = c("theta", "alpha"), values = c(100000, 3.0)),
-           "exponential" = list(params = "theta", values = 50000),
-           "gamma" = list(params = c("theta", "alpha"), values = c(25000, 2)),
-           "weibull" = list(params = c("theta", "tau"), values = c(25000, 0.5))
-    )
-  })
+
+
+# Render Valuebox ---------------------------------------------------------
+
+  output$ui_loss <- renderUI({
+    
+    req(ob_total()) 
+    
+    agg <- ob_total()
+    net_mean <- round(mean(agg$total_net_agg), 0)
+    
+    shinydashboard::valueBox(scales::dollar(net_mean), "Perdida esperada", icon = icon("donate", lib = "font-awesome"),
+             width = NULL, color = "teal")
+    
+    
+  })  
   
-  # ejecutar simulación de frecuencia-severidad 
+  output$ui_loss_quantil <- renderUI({
+    
+    req(quant_agg()) 
+    quant_sel <- unname(quant_agg()) %>% round(0)
+    quant_pct <- names(quant_agg())
+    
+    shinydashboard::valueBox(scales::dollar(quant_sel), paste("Perdida al ", quant_pct , " de confianza"), icon = icon("hand-holding-usd", lib = "font-awesome"),
+                             width = NULL, color = "teal")
+    
+    
+  })  
+  
+  output$ui_loss_ced <- renderUI({
+    
+    req(ob_total()) 
+    totes <- ob_total()
+    
+    ceded_mean <- mean(totes$total_ceded)
+    
+    shinydashboard::valueBox(scales::dollar(ceded_mean), "Perdida cedida esperada", icon = icon("handshake", lib = "font-awesome"),
+                             width = NULL, color = "teal")
+    
+    
+  })  
+
+# Simulacion --------------------------------------------------------------
+
   ult <- eventReactive(input$run_freq, {
      set.seed(1234) 
      freq <- switch(input$freq_dist,
@@ -84,13 +136,10 @@ function(input, output, session) {
      
   })
   
-
-  
   # convertir lista de reclamaciones en matriz
   tidy_claims <- reactive({
     
     ult_hold <- ult()
-    #print(ult_hold[[1]])
     out <- lapply(1:length(ult_hold), function(x) {
       if (length(ult_hold[[x]]) > 0) {
         data.frame("sim" = x, "severity" = ult_hold[[x]])
@@ -100,6 +149,7 @@ function(input, output, session) {
     bind_rows(out) %>%
       mutate(severity = round(severity, 2))
   })
+  
   # perdida limitada por reclamo
   below_specific <- reactive({
     if (is.na(input$specific_lim)) {
@@ -130,11 +180,13 @@ function(input, output, session) {
       mutate(total_ceded = total_gross - total_net_agg)
   })
   
-  # salidas ----------------------------------------------------------
   quant_agg <- reactive({
     quantile(ob_total()$total_net_agg, input$ci)
   })
   
+
+# Plots -------------------------------------------------------------------
+
   
   plot_subtitle <- eventReactive(input$run_freq, {
     
@@ -168,7 +220,6 @@ function(input, output, session) {
   
   output$hist_plot <- renderHighchart({
     agg <- ob_total()
-    print(head(agg))
     net_mean <- round(mean(agg$total_net_agg), 0)
     quant_sel <- unname(quant_agg()) %>% round(0)
     quant_pct <- names(quant_agg())
@@ -207,7 +258,6 @@ function(input, output, session) {
         title = list(text = "Numero de Observaciones")
       )
   })
-  
   
   quant_totes <- reactive({
     quantile(ob_total()$total_gross, input$ci)
@@ -296,6 +346,10 @@ function(input, output, session) {
         title = list(text = "Numbero de Observaciones")
       )
   })
+  
+
+# Tabla -------------------------------------------------------------------
+
   
   # calculo de percentiles 
   cl_values <- function(obs) {
